@@ -89,4 +89,4 @@ MIT License
 ---
 
 > _Reality can be whatever you want it to be._  
-> — Shelton WILSON
+> — Shelton WILSON ([LinkedIn](https://www.linkedin.com/in/sheltonwilson/))
