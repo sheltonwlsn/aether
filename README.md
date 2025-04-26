@@ -1,6 +1,6 @@
 # Aether
 
-**Aether** is a powerful, production-ready tokenizer library for building LLMs and AI models.  
+**Aether** is a first attenpt at a production-ready tokenizer library for building LLMs and AI models.  
 It supports **Byte-Level BPE**, **Unigram LM**, **WordPiece**, **SentencePiece models**, **dynamic batching**, and **GPU acceleration** — all inspired by leading LLM tokenization strategies.
 
 > ✨ The first piece to assembliing the gauntlet (I'm a Marvel guy, not sorry)
