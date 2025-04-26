@@ -1,8 +1,8 @@
 import torch
 import random
 from collections import defaultdict, Counter
-from tokenizer.base_tokenizer import BaseTokenizer
-from tokenizer.utils import fast_split
+from aether.tokenizer.base_tokenizer import BaseTokenizer
+from aether.tokenizer.utils import fast_split
 
 class UnigramTokenizer(BaseTokenizer):
     def __init__(self, vocab_size=10000, dropout=0.0):

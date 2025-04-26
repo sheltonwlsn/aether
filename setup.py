@@ -10,8 +10,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'aether-cli=cli:main',
-            'aether-train=trainer:main',
+            'aether-cli=aether.cli:main',
+            'aether-train=aether.trainer:main',
         ],
     },
     python_requires=">=3.8",

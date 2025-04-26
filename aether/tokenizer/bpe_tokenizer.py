@@ -1,9 +1,9 @@
 import re
 from collections import defaultdict, Counter
 import torch
-from tokenizer.base_tokenizer import BaseTokenizer
-from tokenizer.utils import fast_split
-from tokenizer.byte_level_encoder import ByteLevelEncoder
+from aether.tokenizer.base_tokenizer import BaseTokenizer
+from aether.tokenizer.utils import fast_split
+from aether.tokenizer.byte_level_encoder import ByteLevelEncoder
 
 class BPETokenizer(BaseTokenizer):
     def __init__(self, vocab_size=10000, use_gpu=False, byte_level=False):

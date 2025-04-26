@@ -1,8 +1,8 @@
 import re
 import torch
 from collections import Counter
-from tokenizer.base_tokenizer import BaseTokenizer
-from tokenizer.utils import fast_split
+from aether.tokenizer.base_tokenizer import BaseTokenizer
+from aether.tokenizer.utils import fast_split
 
 class WordPieceTokenizer(BaseTokenizer):
     def __init__(self, vocab_size=10000):

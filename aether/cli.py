@@ -1,8 +1,8 @@
 import argparse
-from tokenizer.bpe_tokenizer import BPETokenizer
-from tokenizer.unigram_tokenizer import UnigramTokenizer
-from tokenizer.wordpiece_tokenizer import WordPieceTokenizer
-from tokenizer.sentencepiece_tokenizer import SentencePieceTokenizer
+from aether.tokenizer.bpe_tokenizer import BPETokenizer
+from aether.tokenizer.unigram_tokenizer import UnigramTokenizer
+from aether.tokenizer.wordpiece_tokenizer import WordPieceTokenizer
+from aether.tokenizer.sentencepiece_tokenizer import SentencePieceTokenizer
 
 def main():
     parser = argparse.ArgumentParser()

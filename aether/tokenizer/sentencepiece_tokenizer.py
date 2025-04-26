@@ -1,6 +1,6 @@
 import re
 import unicodedata
-from tokenizer.base_tokenizer import BaseTokenizer
+from aether.tokenizer.base_tokenizer import BaseTokenizer
 
 class SentencePieceTokenizer(BaseTokenizer):
     def __init__(self, vocab_size=8000, model_type="unigram", use_gpu=False):
