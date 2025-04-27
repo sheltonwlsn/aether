@@ -18,10 +18,10 @@ class SentencePieceTokenizer(BaseTokenizer):
     def train(self, data):
         normalized = [self.normalize(t) for t in data]
         if self.model_type == "unigram":
-            from tokenizer.unigram_tokenizer import UnigramTokenizer
+            from aether.tokenizer.unigram_tokenizer import UnigramTokenizer
             self.subtokenizer = UnigramTokenizer(vocab_size=self.vocab_size, use_gpu=self.use_gpu)
         elif self.model_type == "bpe":
-            from tokenizer.bpe_tokenizer import BPETokenizer
+            from aether.tokenizer.bpe_tokenizer import BPETokenizer
             self.subtokenizer = BPETokenizer(vocab_size=self.vocab_size, use_gpu=self.use_gpu)
         else:
             raise ValueError("Unsupported model_type: choose 'unigram' or 'bpe'")
