@@ -11,13 +11,14 @@ def main():
     parser.add_argument('--vocab_size', type=int, default=10000)
     parser.add_argument('--model', type=str, default="bpe", choices=["bpe", "unigram", "wordpiece", "sentencepiece_bpe", "sentencepiece_unigram"])
     parser.add_argument('--use_gpu', action='store_true')
+    parser.add_argument('--byte_level', action='store_true')
     args = parser.parse_args()
 
     with open(args.corpus) as f:
         data = f.read().splitlines()
 
     if args.model == "bpe":
-        tokenizer = BPETokenizer(vocab_size=args.vocab_size, use_gpu=args.use_gpu)
+        tokenizer = BPETokenizer(vocab_size=args.vocab_size, use_gpu=args.use_gpu, byte_level=args.byte_level)
     elif args.model == "unigram":
         tokenizer = UnigramTokenizer(vocab_size=args.vocab_size, use_gpu=args.use_gpu)
     elif args.model == "wordpiece":

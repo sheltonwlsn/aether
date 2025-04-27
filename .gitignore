@@ -1,3 +1,17 @@
 /build/
 *egg-info
 publish.sh
+
+**.pyc
+__pycache__/
+
+*.txt
+
+# Ignore model training outputs
+results/
+logs/
+checkpoint-*/
+
+# Ignore Anaconda environments
+.env/
+.venv/

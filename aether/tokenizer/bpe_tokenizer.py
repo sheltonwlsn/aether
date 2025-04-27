@@ -13,6 +13,13 @@ class BPETokenizer(BaseTokenizer):
         self.byte_level = byte_level
         if self.byte_level:
             self.ble = ByteLevelEncoder()
+            # Prepopulate all single bytes
+            for b in range(256):
+                token = str(b)
+                if token not in self.token2id:
+                    idx = len(self.token2id)
+                    self.token2id[token] = idx
+                    self.id2token[idx] = token
 
     def get_stats(self, corpus):
         pairs = defaultdict(int)
@@ -39,7 +46,7 @@ class BPETokenizer(BaseTokenizer):
             data = [' '.join(word) + ' </w>' for word in fast_split(data)]
 
         corpus = Counter(data)
-        for i in range(self.vocab_size):
+        for i in range(self.vocab_size - len(self.token2id)):
             pairs = self.get_stats(corpus)
             if not pairs:
                 break
@@ -55,8 +62,9 @@ class BPETokenizer(BaseTokenizer):
             tokens.update(word.split())
         idx_offset = len(self.token2id)
         for idx, tok in enumerate(sorted(tokens)):
-            self.token2id[tok] = idx + idx_offset
-            self.id2token[idx + idx_offset] = tok
+            if tok not in self.token2id:
+                self.token2id[tok] = idx + idx_offset
+                self.id2token[idx + idx_offset] = tok
 
     def encode(self, text, add_special_tokens=True):
         if self.byte_level:

@@ -1,92 +1,157 @@
-# Aether
+# Aether Tokenizer 🌌✨
 
-**Aether** is a first attenpt at a production-ready tokenizer library for building LLMs and AI models.  
-It supports **Byte-Level BPE**, **Unigram LM**, **WordPiece**, **SentencePiece models**, **dynamic batching**, and **GPU acceleration** — all inspired by leading LLM tokenization strategies.
+Aether is a production-grade Byte-Level BPE tokenizer, compatible with HuggingFace Trainer, built for scaling from small models to billion-token LLMs.
 
-> ✨ The first piece to assembliing the gauntlet (I'm a Marvel guy, not sorry)
+## Features
 
----
-
-## 🚀 Features
-
-- 🧠 Byte-Level BPE (GPT-2/3/4 style)
-- 🔥 Dynamic corpus batching (train on TBs of text)
-- 🚀 GPU-accelerated token merging (optional)
-- 🧩 Special tokens: `[PAD]`, `[UNK]`, `[BOS]`, `[EOS]`
-- 🎛 Configurable via CLI or Python API
-- 📦 Pip-installable package
-- 🌐 Unicode-safe, multilingual tokenization
-- 🛠 Supports CPU and M1/M2 Mac acceleration
+- ✅ Byte-Level BPE (like GPT-2/3/4)
+- ✅ HuggingFace-compatible tokenizer interface
+- ✅ Dynamic token batching
+- ✅ Streaming massive datasets (100GB+)
+- ✅ Trainer integration ready
+- ✅ Easy to extend and customize
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
-pip install aether
-```
-
-(or clone and install locally)
-
-```bash
-git clone https://github.com/sheltonwlsn/aether.git
-cd aether
 pip install .
 ```
 
 ---
 
-## 🔥 Quickstart
-
-**Python API**
-
-```python
-from aether.tokenizer.bpe_tokenizer import BPETokenizer
-
-tokenizer = BPETokenizer(vocab_size=8000, byte_level=True)
-tokenizer.train(["hello universe 🌌"])
-
-encoded = tokenizer.encode("reality is bending")
-print(encoded)
-
-decoded = tokenizer.decode(encoded)
-print(decoded)
-```
-
-**CLI Training**
+## Train a Tokenizer
 
 ```bash
-aether-cli --corpus my_corpus.txt --model bpe --vocab_size 8000 --use_gpu
+aether-cli --corpus large_corpus.txt --model bpe --vocab_size 50000 --use_gpu --byte_level
+```
+
+Generates a `tokenizer.json`.
+
+---
+
+## Load the Tokenizer
+
+```python
+from aether.aether_tokenizer import AetherTokenizer
+
+tokenizer = AetherTokenizer("tokenizer.json")
 ```
 
 ---
 
-## 📚 Supported Tokenizers
+## Stream Large Datasets
 
-| Type | Description |
+For local files:
+
+```python
+from streaming_dataset import StreamingTextDataset
+
+dataset = StreamingTextDataset(
+    file_path="large_corpus.txt",
+    tokenizer=tokenizer,
+    max_tokens_per_batch=2048
+)
+```
+
+For HuggingFace datasets (Wikipedia):
+
+```python
+from streaming_dataset_from_hf import StreamingDatasetFromHF
+from datasets import load_dataset
+
+hf_dataset = load_dataset("wikipedia", "20220301.en", split="train", streaming=True)
+
+dataset = StreamingDatasetFromHF(
+    hf_streaming_dataset=hf_dataset,
+    tokenizer=tokenizer,
+    max_tokens_per_batch=2048
+)
+```
+
+---
+
+## Training with HuggingFace Trainer
+
+```python
+from transformers import Trainer, TrainingArguments, AutoModelForMaskedLM
+
+model = AutoModelForMaskedLM.from_pretrained("distilbert-base-uncased")
+
+training_args = TrainingArguments(
+    output_dir="./results",
+    per_device_train_batch_size=2,
+    gradient_accumulation_steps=4,
+    max_steps=1000,
+    logging_dir="./logs",
+    logging_steps=50,
+    save_steps=500,
+    report_to="none"
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=dataset,
+    data_collator=aether_collator,
+)
+
+trainer.train()
+```
+
+---
+
+## Training Results ✅
+
+| Metric | Value |
 |:---|:---|
-| BPE | Classic Byte Pair Encoding |
-| Unigram | Unigram Language Model |
-| WordPiece | Longest-match subword (like BERT) |
-| SentencePiece BPE | Raw-text BPE training |
-| SentencePiece Unigram | Raw-text Unigram training |
+| Dataset | Wikipedia (streamed) |
+| Model | DistilBERT (Masked Language Modeling) |
+| Steps | 1000 |
+| Final Loss | ~0.29 |
+| Samples/sec | ~8 |
+| Steps/sec | ~1 |
+
+✅ Successfully trained on Mac M1 (MPS backend)!
 
 ---
 
-## 🛤 Roadmap
+## Checkpoints and Model Saving
 
-- [ ] Triton GPU accelerated token merging
-- [ ] ByteLevel WordPiece
-- [ ] Multilingual tokenizer benchmarks
-- [ ] Publish to PyPI 🎯
+- Model checkpoints are saved automatically to `./results/checkpoint-XXXX/`
+- **Large files are NOT committed to GitHub.**
+- Recommended to upload to HuggingFace Hub or external storage for sharing.
+
+Load model:
+
+```python
+from transformers import AutoModelForMaskedLM
+
+model = AutoModelForMaskedLM.from_pretrained("./results/checkpoint-1000")
+```
 
 ---
 
-## 🤝 License
+## Project Structure
 
-MIT License
+```
+aether/
+├── aether/
+│   ├── tokenizer/
+│   ├── aether_tokenizer.py
+│   ├── streaming_dataset.py
+│   ├── streaming_dataset_from_hf.py
+├── setup.py
+├── README.md
+├── tokenizer.json
+```
 
 ---
 
-> _Reality can be whatever you want it to be._  
-> — Shelton WILSON ([LinkedIn](https://www.linkedin.com/in/sheltonwilson/))
+## Coming Soon 🚀
+
+- SentencePiece-style sampling
+- Aether Transformer (custom LLM)
+- Hosted pretraining pipelines
+- HuggingFace Hub integration
