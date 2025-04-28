@@ -5,20 +5,27 @@ from aether.tokenizer.base_tokenizer import BaseTokenizer
 from aether.tokenizer.utils import fast_split
 
 class UnigramTokenizer(BaseTokenizer):
-    def __init__(self, vocab_size=10000, dropout=0.0):
+    def __init__(self, vocab_size=10000, dropout=0.0, use_gpu=False):
         super().__init__(vocab_size)
         self.dropout = dropout
+        self.use_gpu = use_gpu
         self.tokens = set()
 
     def train(self, data):
         corpus = Counter(fast_split(data))
-        for word in corpus:
+        substring_counts = Counter()
+
+        # 1. Collect substring counts (instead of blind set)
+        for word, freq in corpus.items():
             for i in range(len(word)):
                 for j in range(i + 1, min(len(word), i + 10) + 1):
-                    self.tokens.add(word[i:j])
+                    substring = word[i:j]
+                    substring_counts[substring] += freq
 
-        token_probs = {token: 1.0 for token in self.tokens}
-        
+        # 2. Initialize token probabilities proportional to frequency
+        token_probs = {token: 1.0 for token, _ in substring_counts.most_common()}
+
+        # 3. Training loop
         for _ in range(10):
             scores = defaultdict(float)
             for word, freq in corpus.items():
@@ -29,6 +36,7 @@ class UnigramTokenizer(BaseTokenizer):
 
         self.token2id = {tok: idx for idx, tok in enumerate(token_probs)}
         self.id2token = {idx: tok for tok, idx in self.token2id.items()}
+
 
     def _encode_word(self, word, token_probs):
         i = 0
